@@ -5,7 +5,7 @@ description = "Terminal image viewer"
 authors = ["Ismaïl Senhaji <ismail.senhaji@gmail.com>"]
 
 [dependencies]
-clap = {version = "*", default-features = false}
-image = "*"
-itertools = "*"
-termion = "*"
+clap = {version = "2.31", default-features = false}
+image = "0.19"
+itertools = "0.7"
+termion = "1.5"

@@ -1,5 +1,5 @@
 use image;
-use image::{DynamicImage, GenericImageView};
+use image::{DynamicImage, GenericImage};
 use itertools::Itertools;
 
 use {Spec, Pixel, Image};
