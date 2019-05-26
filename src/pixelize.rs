@@ -1,8 +1,7 @@
-use image;
-use image::{DynamicImage, GenericImage};
+use image::{self, DynamicImage, GenericImageView};
 use itertools::Itertools;
 
-use {Spec, Pixel, Image};
+use crate::{Image, Pixel, Spec};
 
 static RESIZE_FILTER: image::FilterType = image::FilterType::Nearest;
 
@@ -10,19 +9,22 @@ pub fn pixelize(image: &DynamicImage, spec: Spec) -> Image {
     let (w, h) = size(image, spec);
     let image = image.resize_exact(2 * w, 2 * h, RESIZE_FILTER);
 
-    let pixels = (0..h).cartesian_product(0..w)
-        .map(|(y, x)| [
-             image.get_pixel(x*2, y*2).data,
-             image.get_pixel(x*2+1, y*2).data,
-             image.get_pixel(x*2, y*2+1).data,
-             image.get_pixel(x*2+1, y*2+1).data,
-        ])
+    let pixels = (0..h)
+        .cartesian_product(0..w)
+        .map(|(y, x)| {
+            [
+                image.get_pixel(x * 2, y * 2).data,
+                image.get_pixel(x * 2 + 1, y * 2).data,
+                image.get_pixel(x * 2, y * 2 + 1).data,
+                image.get_pixel(x * 2 + 1, y * 2 + 1).data,
+            ]
+        })
         .map(|block| match spec.block {
             1 => do_pixel_1(&block),
             2 => do_pixel_2(&block),
             _ => do_pixel_4(&block),
         })
-    .collect();
+        .collect();
 
     Image {
         size: (w, h),
@@ -94,7 +96,7 @@ fn do_pixel_4(block: &[[u8; 4]; 4]) -> Pixel {
 
             (diff, fg, bg, CHARS[n])
         })
-    .min_by_key(|x| x.0)
+        .min_by_key(|x| x.0)
         .unwrap();
 
     Pixel {
